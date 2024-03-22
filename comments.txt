@@ -1,1 +1,5 @@
 Здравствуйте!
+
+Вопросы:
+sprint3.py строка 106
+"row_count = df.to_sql(pg_table, engine, schema=pg_schema, if_exists='append', index=False) # почему тут append a не replace?"
