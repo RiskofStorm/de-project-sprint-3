@@ -3,7 +3,7 @@ customer_stats AS (
   SELECT *
   FROM mart.f_sales
            INNER JOIN mart.d_calendar on f_sales.date_id = d_calendar.date_id
- WHERE week_of_year = DATE_PART('week', '{{ds}}'::DATE))
+ WHERE week_of_year = DATE_PART('week', '{{ds}}'::DATE)
   
 ),
 new_customers AS (
