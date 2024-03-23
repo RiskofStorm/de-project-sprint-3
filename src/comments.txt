@@ -1,0 +1,24 @@
+Привет
+Классный проект, много кода чужого, очень долго ковырялся
+
+у меня вопросы по коду:
+в sprint3.py :
+    51, 54 строки - json.loads(response.content) почему не завести переменную reponse_json? каждый раз обрабатывать это же доп. вычисления;
+    
+    102 строка -  мой код df['payment_amount'].where(~(df['status'] == "refunded"), df['payment_amount'] * -1, inplace=True) 
+    я решил на уровне pandas поменять на отрицательное значение, т.к. в pandas я думаю немного быстрее чем в postgres, что скажишь?
+
+
+в mart.d_customer.sql:
+    max(city_id) - это просто так? рандом получается? тут как раз бы пригодилось SCD2, SCD3 
+
+
+в mart.d_item.sql:
+    where item_id not in (select item_id from mart.d_item) - можно было c оптимизацией присоединением 
+    LEFT JOIN (select item_id from mart.d_item) AS t(item_id) ON t.item_id = staging.user_order_log.item_Id
+
+
+я не докапываюсь, а уточняю для себя, т.к. у меня мало опыта
+если надо поменять структуру файлов, ок, скажи как
+
+Пока ты проверяешь, я попытаюсь сделать 3ю таску, но ее еще надо понять, надеюсь я уложусь в дедлайн, он завтра 24.03.2024
