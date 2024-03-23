@@ -8,6 +8,7 @@
     102 строка -  мой код df['payment_amount'].where(~(df['status'] == "refunded"), df['payment_amount'] * -1, inplace=True) 
     я решил на уровне pandas поменять на отрицательное значение, т.к. в pandas я думаю немного быстрее чем в postgres, что скажишь?
 
+    108 строка - row_count = df.to_sql(pg_table, engine, schema=pg_schema, if_exists='append', index=False) -- почему тут append a не replace?
 
 в mart.d_customer.sql:
     max(city_id) - это просто так? рандом получается? тут как раз бы пригодилось SCD2, SCD3 
@@ -24,3 +25,5 @@
 Пока ты проверяешь, я попытаюсь сделать 3ю таску, но ее еще надо понять, надеюсь я уложусь в дедлайн, он завтра 24.03.2024
 
 upd
+
+в 3ей таске надо проверить единоразово на дубликаты или в DAG'e сделать проверки через pandas во время upload'a
