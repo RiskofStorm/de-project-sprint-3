@@ -61,7 +61,7 @@ def get_report(ti):
     ti.xcom_push(key='report_id', value=report_id)
     print(f'Report_id={report_id}')
 
-# get data that didn't appear in main report
+
 def get_increment(date, ti):
     print('Making request get_increment')
     report_id = ti.xcom_pull(key='report_id')
@@ -98,11 +98,13 @@ def upload_data_to_staging(filename, date, pg_table, pg_schema, ti):
     if 'status' not in df.columns:
         df['status'] = 'shipped'
 
-    # return money to customers      
-    df['payment_amount'] = df.query('status == "refunded"')['payment_amount'] * -1
+    # refund counts as a negative value
+    df['payment_amount'].where(~(df['status'] == "refunded"), df['payment_amount'] * -1, inplace=True)
+    # df.loc[df['status'] == "refunded", 'payment_amount'] = df.query('status == "refunded"')['payment_amount'] * -1
 
     postgres_hook = PostgresHook(postgres_conn_id)
     engine = postgres_hook.get_sqlalchemy_engine()
+    df.to_csv(f'{pg_table}.csv', index=False)
     row_count = df.to_sql(pg_table, engine, schema=pg_schema, if_exists='append', index=False) # почему тут append a не replace?
     print(f'{row_count} rows was inserted')
 
@@ -167,7 +169,12 @@ with DAG(
         sql="sql/mart.f_sales.sql",
         parameters={"date": {business_dt}}
     )
-
+    update_f_customer_retention = PostgresOperator(
+        task_id='update_f_customer_retention',
+        postgres_conn_id=postgres_conn_id,
+        sql="sql/mart.f_customer_retention.sql",
+        parameters={"date": {business_dt}}
+    )
     (
             generate_report
             >> get_report
@@ -175,4 +182,5 @@ with DAG(
             >> upload_user_order_inc
             >> [update_d_item_table, update_d_city_table, update_d_customer_table]
             >> update_f_sales
+            >> update_f_customer_retention
     )
