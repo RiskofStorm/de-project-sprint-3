@@ -1,9 +1,18 @@
+DELETE FROM mart.f_customer_retention
+WHERE period_id IN (
+                    SELECT DISTINCT period_id
+                    FROM mart.f_customer_retention fcr
+                        INNER JOIN mart.d_calendar dc ON fcr.period_id = dc.week_of_year 
+                    WHERE dc.week_of_year = DATE_PART('week', '{{ds}}'::DATE)
+);
+
+
 WITH
 customer_stats AS (
-  SELECT *
-  FROM mart.f_sales
+SELECT *
+FROM mart.f_sales
            INNER JOIN mart.d_calendar on f_sales.date_id = d_calendar.date_id
- WHERE week_of_year = DATE_PART('week', '{{ds}}'::DATE)
+WHERE week_of_year = DATE_PART('week', '{{ds}}'::DATE)
   
 ),
 new_customers AS (
