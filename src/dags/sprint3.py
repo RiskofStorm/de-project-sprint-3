@@ -125,8 +125,8 @@ with DAG(
         description='Provide default dag for sprint3',
         catchup=True,
         start_date=datetime.today() - timedelta(days=7),
-        end_date=datetime.today() - timedelta(days=1)
-        # max_active_runs = 1
+        end_date=datetime.today() - timedelta(days=1),
+        max_active_runs = 1
 ) as dag:
     generate_report = PythonOperator(
         task_id='generate_report',
